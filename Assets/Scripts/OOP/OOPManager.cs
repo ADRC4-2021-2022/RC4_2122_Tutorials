@@ -23,11 +23,14 @@ public class OOPManager : MonoBehaviour
 
         _dogs["Ivy"].Bark(5);
 
+        Debug.Log($"Fifi is {_dogs["Fifi"].Age} years old");
+
+        /*
         //Let every dog bark a random amount of times
         foreach (var dog in _dogs.Values)
         {
             dog.Bark(Random.Range(1, 5));
-        }
+        }*/
     }
 
 

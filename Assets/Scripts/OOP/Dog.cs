@@ -59,6 +59,14 @@ public class Dog
         {
             Debug.Log($"{Name}: Woef");
         }
+        if(_mother!=null)
+        {
+            _mother.Bark(1);
+        }
+        if (_father != null)
+        {
+            _father.Bark(1);
+        }
     }
 
     public void AddMotherFather(Dog mother, Dog father)
