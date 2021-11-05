@@ -1,0 +1,9 @@
+
+=== Fri Nov  5 10:01:24 2021
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.timeline from version 1.5.6 to 1.6.2
+  com.unity.visualscripting from version 1.6.1 to 1.7.2
