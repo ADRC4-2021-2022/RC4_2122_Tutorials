@@ -59,7 +59,8 @@ public class Dog
         {
             Debug.Log($"{Name}: Woef");
         }
-        if(_mother!=null)
+        //Whenever a dog barks, the parents are concerned and also bark
+        if (_mother != null)
         {
             _mother.Bark(1);
         }

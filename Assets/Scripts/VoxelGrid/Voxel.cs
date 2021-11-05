@@ -67,7 +67,7 @@ public class Voxel
         trigger.AttachedVoxel = this;
     }
 
-    public List<Voxel> GetNeighboursList()
+    public List<Voxel> GetNeighbourList()
     {
         List<Voxel> neighbours = new List<Voxel>();
         foreach (var direction in Util.Directions)
@@ -80,6 +80,16 @@ public class Voxel
         }
 
         return neighbours;
+    }
+
+    public void ToggleNeighbours()
+    {
+        List<Voxel> neighbours = GetNeighbourList();
+
+        foreach (var neighbour in neighbours)
+        {
+            neighbour.Alive = !neighbour.Alive;
+        }
     }
 
     #endregion

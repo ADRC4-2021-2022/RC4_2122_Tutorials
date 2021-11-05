@@ -9,6 +9,11 @@ public class OOPManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Dog myFirstDog = new Dog("Cookie", 2017, Breed.Poodle);
+
+        myFirstDog.Bark(5);
+
+
         _dogs = new Dictionary<string,Dog>();
 
         _dogs.Add("Toby",new Dog("Toby",2004,Breed.Labrador));

@@ -33,6 +33,7 @@ public class DebugTest : MonoBehaviour
             "Six"
         };
 
+
         //list functions
         int amountOfElements = numbersText.Count; //the amount of elements in the list
         numbersText.Remove("For");//removes and item from the list. The indexes will shift
@@ -62,20 +63,30 @@ public class DebugTest : MonoBehaviour
 
         for (int i = 0; i < numbersText.Count; i++)
         {
-            Debug.Log("number");
+            Debug.Log(numbersText[i]);
         }
 
-        foreach (var number in numbersText)
+
+        foreach (string number in numbersText)
         {
-            Debug.Log("number");
+            Debug.Log(number);
         }
 
-        foreach (var number in numbers)
+
+
+        /*foreach (var number in numbers)
         {
             Debug.Log(numbersText[number]);
-        }
+        }*/
 
         WriteFibonacciNumbers(30);
+
+        Dictionary<string, int> agesByName = new Dictionary<string, int>();
+        agesByName.Add("Kevin", 29);
+        agesByName.Add("Patrick", 35);
+
+        string nameToGet = "Patrick";
+        Debug.Log($"{nameToGet} is {agesByName[nameToGet] } years old");
 
         Dictionary<string, int> numbersByName = new Dictionary<string, int>();
         for (int i = 0; i < numbersText.Count; i++)
@@ -83,7 +94,9 @@ public class DebugTest : MonoBehaviour
             numbersByName.Add(numbersText[i], i);
         }
 
-        Debug.Log($"{numbersByName["four"]} is written as four");
+        Debug.Log($"{numbersByName["Four"]} is written as Four");
+
+        
     }
 
     // Update is called once per frame
@@ -92,12 +105,12 @@ public class DebugTest : MonoBehaviour
 
     }
 
-    
+  
 /// <summary>
 /// Output fibonacci number 
 /// </summary>
 /// <param name="count">Amount of numbers to be outputted</param>
-    private void WriteFibonacciNumbers(int count)
+    private List<int> WriteFibonacciNumbers(int count)
     {
         List<int> fibonacciNumbers = new List<int> { 1, 1 };
 
@@ -109,13 +122,21 @@ public class DebugTest : MonoBehaviour
 
             fibonacciNumbers.Add(previous + previous2);
         }
+        /*
+        for (int i = 2; i < count; i++)
+        {
+            var previous = fibonacciNumbers[fibonacciNumbers.Count - 1];
+            var previous2 = fibonacciNumbers[fibonacciNumbers.Count - 2];
+
+            fibonacciNumbers.Add(previous + previous2);
+        }*/
 
         //log all the fibonacci numbers in the list
         foreach (var number in fibonacciNumbers)
         {
-            Debug.Log($"The next number is {fibonacciNumbers[number]}");
+            Debug.Log($"The next number is {number}");
         }
-        
+        return fibonacciNumbers;
     }
 
     private void OnGUI()

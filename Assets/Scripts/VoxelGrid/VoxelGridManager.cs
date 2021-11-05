@@ -33,7 +33,7 @@ public class VoxelGridManager : MonoBehaviour
                     GameObject hitObject = hit.transform.gameObject;
                     var voxel = hitObject.GetComponent<VoxelTrigger>().AttachedVoxel;
 
-                    voxel.Alive = !voxel.Alive;
+                    voxel.ToggleNeighbours();
                 }
             }
         }
