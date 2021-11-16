@@ -6,6 +6,8 @@ public class VoxelGrid
 {
     #region public fields
     public Vector3Int GridDimensions { get; private set; }
+    public float VoxelSize { get; private set; }
+    public Vector3 Origin { get; private set; }
 
     #endregion
 
@@ -14,16 +16,20 @@ public class VoxelGrid
     #endregion
 
     #region Constructors
-    public VoxelGrid(Vector3Int gridDimensions)
+    public VoxelGrid(Vector3Int gridDimensions, float voxelSize,Vector3 origin)
     {
         GridDimensions = gridDimensions;
+        VoxelSize = voxelSize;
+        Origin = origin;
 
         MakeVoxels();
     }
 
-    public VoxelGrid(int x, int y, int z)
+    public VoxelGrid(int x, int y, int z, float voxelSize, Vector3 origin)
     {
         GridDimensions = new Vector3Int(x,y,z);
+        VoxelSize = voxelSize;
+        Origin = origin;
 
         MakeVoxels();
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class VoxelGridManager : MonoBehaviour
 {
@@ -36,13 +37,30 @@ public class VoxelGridManager : MonoBehaviour
         get { return new Vector3Int(_xDimensions, _yDimensions, _zDimensions); }
     }*/
 
+    //This object is used to handle input using the new Unity input system
+    private ProjectControlls _projectControlls;
 
 
     private VoxelGrid _grid;
+
+    private void Awake()
+    {
+        _projectControlls = new ProjectControlls();
+    }
+
+    private void OnEnable()
+    {
+        _projectControlls.Enable();
+    }
+    private void OnDisable()
+    {
+        _projectControlls.Disable();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        _grid = new VoxelGrid(_gridDimensions);
+        _grid = new VoxelGrid(_gridDimensions,_voxelSize,_gridDimensions);
 
     }
 
@@ -61,9 +79,9 @@ public class VoxelGridManager : MonoBehaviour
 
     private void PerformRaycast()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (_projectControlls.Player.LeftMouseButtonClick.WasPressedThisFrame())
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = Camera.main.ScreenPointToRay(_projectControlls.Player.MousePosition.ReadValue<Vector2>());
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {

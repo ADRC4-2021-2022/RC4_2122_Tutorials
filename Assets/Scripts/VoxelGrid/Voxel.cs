@@ -27,12 +27,21 @@ public class Voxel
         }
     }
 
+    /// <summary>
+    /// Get the centre point of the voxel in worldspace
+    /// </summary>
+    public Vector3 Centre => _gridOrigin + (Vector3)Index * _voxelSixe + Vector3.one * 0.5f * _voxelSixe;
     #endregion
 
     #region private fields
     private GameObject _goVoxelTrigger;
     private VoxelGrid _grid;
     private bool _alive;
+    private float _scalefactor = 0.95f;
+    private float _voxelSixe => _grid.VoxelSize;
+    private Vector3 _gridOrigin => _grid.Origin;
+
+    
 
     #endregion
 
@@ -62,9 +71,9 @@ public class Voxel
         _goVoxelTrigger = GameObject.CreatePrimitive(PrimitiveType.Cube);
         _goVoxelTrigger.name = $"Voxel {Index}";
         _goVoxelTrigger.tag = "Voxel";
-        _goVoxelTrigger.transform.position = Index;
-        _goVoxelTrigger.transform.localScale = Vector3.one * 0.95f;
-        _goVoxelTrigger.transform.localScale = new Vector3(1,1,1) * 0.95f;
+        _goVoxelTrigger.transform.position = Centre;
+        _goVoxelTrigger.transform.localScale = Vector3.one * _voxelSixe* _scalefactor;
+        
         VoxelTrigger trigger = _goVoxelTrigger.AddComponent<VoxelTrigger>();
         trigger.AttachedVoxel = this;
     }
@@ -93,6 +102,8 @@ public class Voxel
             neighbour.Alive = !neighbour.Alive;
         }
     }
+
+    
 
     #endregion
 }
