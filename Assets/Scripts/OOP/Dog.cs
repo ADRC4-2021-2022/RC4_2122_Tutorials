@@ -86,6 +86,11 @@ public class Dog
         return currentYear - _birthYear;
     }
 
+
+    public void Scratch()
+    {
+
+    }
     #endregion
 
 

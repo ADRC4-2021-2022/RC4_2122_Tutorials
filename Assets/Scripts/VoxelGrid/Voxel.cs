@@ -19,6 +19,7 @@ public class Voxel
         {
             if(_goVoxelTrigger!=null)
             {
+                
                 MeshRenderer renderer = _goVoxelTrigger.GetComponent<MeshRenderer>();
                 renderer.enabled = value;
             }
@@ -63,6 +64,7 @@ public class Voxel
         _goVoxelTrigger.tag = "Voxel";
         _goVoxelTrigger.transform.position = Index;
         _goVoxelTrigger.transform.localScale = Vector3.one * 0.95f;
+        _goVoxelTrigger.transform.localScale = new Vector3(1,1,1) * 0.95f;
         VoxelTrigger trigger = _goVoxelTrigger.AddComponent<VoxelTrigger>();
         trigger.AttachedVoxel = this;
     }
@@ -70,7 +72,7 @@ public class Voxel
     public List<Voxel> GetNeighbourList()
     {
         List<Voxel> neighbours = new List<Voxel>();
-        foreach (var direction in Util.Directions)
+        foreach (Vector3Int direction in Util.Directions)
         {
             Vector3Int neighbourIndex = Index + direction;
             if (Util.CheckInBounds(_grid.GridDimensions, neighbourIndex))

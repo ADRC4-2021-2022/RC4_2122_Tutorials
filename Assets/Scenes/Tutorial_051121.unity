@@ -162,11 +162,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 461073993}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce174407fe8c7dd44a576870e760b3b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  test: 2
   _gridDimensions: {x: 10, y: 1, z: 10}
 --- !u!1 &555237383
 GameObject:
@@ -192,7 +193,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 555237383}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0fccac70a7b7cef42ad8c1c9ff631dd8, type: 3}
   m_Name: 
@@ -251,7 +252,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 616807516}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 439d3cf9baddc7f4ea00d10f714164b6, type: 3}
   m_Name: 

@@ -12,6 +12,7 @@ public class OOPManager : MonoBehaviour
         Dog myFirstDog = new Dog("Cookie", 2017, Breed.Poodle);
 
         myFirstDog.Bark(5);
+        myFirstDog.Scratch();
 
 
         _dogs = new Dictionary<string,Dog>();

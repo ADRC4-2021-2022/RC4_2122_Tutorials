@@ -7,7 +7,6 @@ public class VoxelGrid
     #region public fields
     public Vector3Int GridDimensions { get; private set; }
 
-
     #endregion
 
     #region private fields
@@ -21,6 +20,14 @@ public class VoxelGrid
 
         MakeVoxels();
     }
+
+    public VoxelGrid(int x, int y, int z)
+    {
+        GridDimensions = new Vector3Int(x,y,z);
+
+        MakeVoxels();
+    }
+
 
     #endregion
 
