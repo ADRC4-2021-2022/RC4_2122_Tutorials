@@ -78,7 +78,7 @@ public class Voxel
         trigger.AttachedVoxel = this;
     }
 
-    public List<Voxel> GetNeighbourList()
+    public List<Voxel> GetFaceNeighbourList()
     {
         List<Voxel> neighbours = new List<Voxel>();
         foreach (Vector3Int direction in Util.Directions)
@@ -93,9 +93,29 @@ public class Voxel
         return neighbours;
     }
 
+    /// <summary>
+    /// Get all the voxels that exist with relative indices to the this voxel. 
+    /// </summary>
+    /// <param name="relativeIndices">indexes related to the voxels indices</param>
+    /// <returns>List of relative indices. If requested indices are out of bounds, the list will be empty</returns>
+    public List<Voxel> GetRelatedVoxels(List<Vector3Int>relativeIndices)
+    {
+        List<Voxel> relatedVoxels = new List<Voxel>();
+        foreach (Vector3Int relativeIndex in relativeIndices)
+        {
+            Vector3Int newIndex = Index + relativeIndex;
+            if (Util.CheckInBounds(_grid.GridDimensions, newIndex))
+            {
+                relatedVoxels.Add(_grid.GetVoxelByIndex(newIndex));
+            }
+        }
+
+        return relatedVoxels;
+    }
+
     public void ToggleNeighbours()
     {
-        List<Voxel> neighbours = GetNeighbourList();
+        List<Voxel> neighbours = GetFaceNeighbourList();
 
         foreach (var neighbour in neighbours)
         {

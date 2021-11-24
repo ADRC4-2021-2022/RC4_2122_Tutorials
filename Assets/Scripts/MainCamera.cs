@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MainCamera : MonoBehaviour
 {
-    Vector3 _target;
+    public Vector3 Target = Vector3.zero;
     private float _rotateSpeed = 0.1f;
     private float _panSpeed = 0.1f;
     private float _zoomSpeed = 0.1f;
@@ -84,21 +84,21 @@ public class MainCamera : MonoBehaviour
             pitch = 0;
         if (xAngle + pitch < _minXRotation && pitch < 0)
             pitch = 0;
-        transform.RotateAround(_target, Vector3.up, yaw);
-        transform.RotateAround(_target, transform.rotation * Vector3.right, pitch);
+        transform.RotateAround(Target, Vector3.up, yaw);
+        transform.RotateAround(Target, transform.rotation * Vector3.right, pitch);
         if (transform.position.y < 0) transform.position = new Vector3(transform.position.x, 0, transform.position.z);
     }
 
 
     public void Zoom(float zoomFactor)
     {
-        float distance = (_target - transform.position).magnitude * zoomFactor;
+        float distance = (Target - transform.position).magnitude * zoomFactor;
         transform.Translate(Vector3.forward * distance, Space.Self);
     }
     //Put angles in a format from -180 to 180 (instead of unity's 0 - 360)
     public float FormatAngle(float angle) => angle < 180 ? angle : angle - 360;
 
-    public void SetTarget(Vector3 position) => _target = position;
+    public void SetTarget(Vector3 position) => Target = position;
 
     public void ResetPosition() => transform.SetPositionAndRotation(_startTransform.position, _startTransform.rotation);
 
