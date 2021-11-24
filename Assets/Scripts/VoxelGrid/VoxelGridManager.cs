@@ -67,6 +67,8 @@ public class VoxelGridManager : MonoBehaviour
 
         }
     }
+
+    public Vector3 GridCentre => _grid.Centre;
     #endregion
 
     #region private fields
