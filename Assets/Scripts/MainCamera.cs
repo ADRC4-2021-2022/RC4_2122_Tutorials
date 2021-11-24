@@ -12,22 +12,22 @@ public class MainCamera : MonoBehaviour
     private Pose _startTransform;
     private float _height = 15f;
 
-    private ProjectControlls _projectControlls;
+    private ProjectControls _projectControls;
 
     private void Awake()
     {
         _startTransform = new Pose(transform.position, transform.rotation);
-        _projectControlls = new ProjectControlls();
+        _projectControls = new ProjectControls();
 
     }
 
     private void OnEnable()
     {
-        _projectControlls.Enable();
+        _projectControls.Enable();
     }
     private void OnDisable()
     {
-        _projectControlls.Disable();
+        _projectControls.Disable();
     }
 
 
@@ -35,9 +35,9 @@ public class MainCamera : MonoBehaviour
     {
         
         if (Application.platform == RuntimePlatform.Android) return;
-        bool pan = _projectControlls.Camera.Pan.IsPressed();
-        bool rotate = _projectControlls.Camera.Rotate.IsPressed();
-        Vector2 mousePosition = _projectControlls.Camera.MousePosition.ReadValue<Vector2>();
+        bool pan = _projectControls.Camera.Pan.IsPressed();
+        bool rotate = _projectControls.Camera.Rotate.IsPressed();
+        Vector2 mousePosition = _projectControls.Camera.MousePosition.ReadValue<Vector2>();
 
         if (pan)
         {
@@ -54,7 +54,7 @@ public class MainCamera : MonoBehaviour
             Rotate(yaw, pitch);
         }
 
-        float zoomFactor = _projectControlls.Camera.Zoom.ReadValue<float>();
+        float zoomFactor = _projectControls.Camera.Zoom.ReadValue<float>();
         if (zoomFactor != 0)
         {
             Debug.Log(zoomFactor);

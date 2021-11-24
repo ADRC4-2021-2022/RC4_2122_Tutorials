@@ -87,7 +87,7 @@ public class VoxelGridManager : MonoBehaviour
     private bool _gameOfLifeRunning = false;
 
     //This object is used to handle input using the new Unity input system
-    private ProjectControlls _projectControlls;
+    private ProjectControls _projectControlls;
 
 
     private VoxelGrid _grid;
@@ -98,7 +98,7 @@ public class VoxelGridManager : MonoBehaviour
     #endregion
     private void Awake()
     {
-        _projectControlls = new ProjectControlls();
+        _projectControlls = new ProjectControls();
     }
 
     private void OnEnable()
