@@ -37,15 +37,15 @@ public class VoxelGridManager : MonoBehaviour
     #endregion
 
     #region public fields
-    public MainCamera MainCamera
+    public MainCamera Camera
     {
         get
         {
-            if (_mainCamera == null)
+            if (_camera == null)
             {
-                _mainCamera = GameObject.Find("Main Camera").GetComponent<MainCamera>();
+                _camera = GameObject.Find("Main Camera").GetComponent<MainCamera>();
             }
-            return _mainCamera;
+            return _camera;
         }
 
     }
@@ -72,7 +72,7 @@ public class VoxelGridManager : MonoBehaviour
     #endregion
 
     #region private fields
-    private MainCamera _mainCamera;
+    private MainCamera _camera;
 
     //When getting the grid dimensions, it will return a vector3int with the input from the sliders
     private Vector3Int _gridDimensions => new Vector3Int(_xDimensions, _yDimensions, _zDimensions);
@@ -123,7 +123,7 @@ public class VoxelGridManager : MonoBehaviour
         _runGameOfLife = RunGameOfLife();
 
         //Set the camera target to the centre of the grid to keep rotating around the voxelgrid
-        MainCamera.Target = _grid.Centre;
+        Camera.Target = _grid.Centre;
 
     }
 
@@ -151,7 +151,7 @@ public class VoxelGridManager : MonoBehaviour
     {
         if (_projectControlls.Player.LeftMouseButtonClick.WasPressedThisFrame())
         {
-            Ray ray = Camera.main.ScreenPointToRay(_projectControlls.Player.MousePosition.ReadValue<Vector2>());
+            Ray ray = UnityEngine.Camera.main.ScreenPointToRay(_projectControlls.Player.MousePosition.ReadValue<Vector2>());
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit))
             {
