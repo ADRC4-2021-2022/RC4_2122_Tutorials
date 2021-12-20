@@ -68,6 +68,21 @@ public class VoxelGrid
     #endregion
 
     #region public function
+    /// <summary>
+    /// Get the Voxels of the <see cref="VoxelGrid"/>
+    /// </summary>
+    /// <returns>All the Voxels</returns>
+    public IEnumerable<Voxel> GetVoxels()
+    {
+        for (int x = 0; x < GridDimensions.x; x++)
+            for (int y = 0; y < GridDimensions.y; y++)
+                for (int z = 0; z < GridDimensions.z; z++)
+                {
+                    yield return _voxels[x, y, z];
+                }
+    }
+
+
     //Shorthand syntax for a function returning the output of GetVoxelByIndex
     //Two function with the same name, but different parameters ==> different signature
     /// <summary>
