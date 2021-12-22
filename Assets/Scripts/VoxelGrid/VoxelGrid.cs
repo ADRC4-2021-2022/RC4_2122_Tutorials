@@ -110,6 +110,7 @@ public class VoxelGrid
     }
 
     /// <summary>
+    /// 
     /// Get all the voxels at a certain XZ layer
     /// </summary>
     /// <param name="yLayer">Y index of the layer</param>
