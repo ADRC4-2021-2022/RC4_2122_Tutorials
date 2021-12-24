@@ -90,7 +90,7 @@ public class PatternManager
     /// </summary>
     /// <param name="index">The index to look for</param>
     /// <returns>The pattern linked to the type. Will return null if the type is never defined</returns>
-    public static Pattern GetPatternByIndex(int index) => Patterns[index];
+    public static Pattern GetPatternByIndex(int index) => Patterns[(int)index];
 
     public static Pattern GetPatternByName(string name) => PatternsByName[name];
 }

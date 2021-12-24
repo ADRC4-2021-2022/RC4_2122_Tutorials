@@ -95,11 +95,6 @@ public class VoxeliseManager : MonoBehaviour
         UpdateVoxelOffset();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     #endregion
 
     #region Private Functions
@@ -113,12 +108,10 @@ public class VoxeliseManager : MonoBehaviour
         foreach (Voxel voxel in _grid.GetVoxels())
         {
             bool isInside = _meshFunctions.IsInsideCentre(voxel);
-            //shorthand if statement
-            voxel.Alive = checkInside ? isInside : !isInside;
 
             //This is exactly the same code as the line on top
-            if (checkInside) voxel.Alive = isInside;
-            else voxel.Alive = !isInside;
+            if (checkInside==isInside) voxel.Status = VoxelState.Alive;
+            else voxel.Status = VoxelState.Dead;
         }
 
     }

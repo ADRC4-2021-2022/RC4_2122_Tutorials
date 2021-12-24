@@ -57,7 +57,6 @@ public class MainCamera : MonoBehaviour
         float zoomFactor = _projectControls.Camera.Zoom.ReadValue<float>();
         if (zoomFactor != 0)
         {
-            Debug.Log(zoomFactor);
             Zoom(zoomFactor*_zoomSpeed);
         }
     }

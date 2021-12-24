@@ -116,7 +116,7 @@ public class VoxelGridManager : MonoBehaviour
     void Start()
     {
         _grid = new VoxelGrid(_gridDimensions, _voxelSize, _gridDimensions);
-        _grid.SetGridState(false);
+        _grid.SetGridState(VoxelState.Available);
 
         _gameOfLife = new GameOfLife(_grid);
 
@@ -180,7 +180,7 @@ public class VoxelGridManager : MonoBehaviour
     #region unity canvas functions
     public void ResetGrid()
     {
-        _grid.SetGridState(false);
+        _grid.SetGridState(VoxelState.Available);
     }
 
     public void RandomGroundLayer()

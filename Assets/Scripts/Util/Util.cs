@@ -11,12 +11,7 @@ public static class Util
     /// <param name="v">the Vector3 variable this method is applied to</param>
     /// <returns>the rounded Vector3Int value of the given Vector3</returns>
     public static Vector3Int ToVector3IntRound(this Vector3 v) => new Vector3Int(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y), Mathf.RoundToInt(v.z));
-    public static bool TryOrientIndex(Vector3Int localIndex, Vector3Int anchor, Quaternion rotation, Vector3Int gridDimensions, out Vector3Int worldIndex)
-    {
-        var rotated = rotation * localIndex;
-        worldIndex = anchor + rotated.ToVector3IntRound();
-        return CheckInBounds(gridDimensions, worldIndex);
-    }
+    
 
     /// <summary>
     /// List of the Carthesian directions (along the x, y, z axis)
@@ -30,6 +25,27 @@ public static class Util
         new Vector3Int(0,0,-1),// min z
         new Vector3Int(0,0,1)// plus z
     };
+
+    /// <summary>
+    /// Generate a random color
+    /// </summary>
+    public static Color RandomColor
+    {
+        get
+        {
+            float r = Random.Range(0, 255) / 255f;
+            float g = Random.Range(0, 255) / 255f;
+            float b = Random.Range(0, 255) / 255f;
+            return new Color(r, g, b);
+        }
+    }
+
+    public static bool TryOrientIndex(Vector3Int localIndex, Vector3Int anchor, Quaternion rotation, Vector3Int gridDimensions, out Vector3Int worldIndex)
+    {
+        Vector3 rotated = rotation * localIndex;
+        worldIndex = anchor + rotated.ToVector3IntRound();
+        return CheckInBounds(gridDimensions, worldIndex);
+    }
 
     /// <summary>
     /// Check if an index is inside a given bounds.
@@ -74,4 +90,30 @@ public static class Util
         bool isInside = hitCounter % 2 != 0;
         return isInside;
     }
+
+    /// <summary>
+    /// Generate a random index within voxelgrid dimensions
+    /// </summary>
+    /// <returns>A random index</returns>
+    public static Vector3Int RandomIndex(Vector3Int gridDimensions)
+    {
+        int x = Random.Range(0, gridDimensions.x);
+        int y = Random.Range(0, gridDimensions.y);
+        int z = Random.Range(0, gridDimensions.z);
+        return new Vector3Int(x, y, z);
+    }
+
+    /// <summary>
+    /// Get a random rotation alligned with the x,y or z axis
+    /// </summary>
+    /// <returns>A random rotation</returns>
+    public static Quaternion RandomCarthesianRotation()
+    {
+        int x = Random.Range(0, 4) * 90;
+        int y = Random.Range(0, 4) * 90;
+        int z = Random.Range(0, 4) * 90;
+        return Quaternion.Euler(x, y, z);
+    }
+
+  
 }

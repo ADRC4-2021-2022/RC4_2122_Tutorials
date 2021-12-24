@@ -1,7 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
+/// <summary>
+/// Status of the voxel. Dead are voxels that won't be used,
+/// Alive are voxels that are currently activated,
+/// Available are voxels that can be activated
+/// </summary>
+public enum VoxelState { Dead = 0, Alive = 1, Available = 2 }
+
+/// <summary>
+/// Data structure for a voxel in a grid
+/// </summary>
 public class Voxel
 {
 
@@ -9,21 +20,52 @@ public class Voxel
 
     //index can not be set outside of the scope of this class
     public Vector3Int Index { get; private set; }
-    public bool Alive
+
+    /// <summary>
+    /// Change the value of _showVoxel and enable/disable the _goVoxelTrigger 
+    /// </summary>
+    public bool ShowAliveVoxel
     {
         get
         {
-            return _alive;
+            return _showAliveVoxel;
         }
         set
         {
-            if(_goVoxelTrigger!=null)
-            {
-                
-                MeshRenderer renderer = _goVoxelTrigger.GetComponent<MeshRenderer>();
-                renderer.enabled = value;
-            }
-            _alive = value;
+            _showAliveVoxel = value;
+            ChangeVoxelVisability();
+        }
+    }
+
+    /// <summary>
+    /// Change the value of _showVoxel and enable/disable the _goVoxelTrigger 
+    /// </summary>
+    public bool ShowAvailableVoxel
+    {
+        get
+        {
+            return _showAvailableVoxel;
+        }
+        set
+        {
+            _showAvailableVoxel = value;
+            ChangeVoxelVisability();
+        }
+    }
+
+    /// <summary>
+    /// Get and set the status of the voxel. When setting the status, the linked gameobject will be enable or disabled depending on the state.
+    /// </summary>
+    public VoxelState Status
+    {
+        get
+        {
+            return _voxelStatus;
+        }
+        set
+        {
+            _voxelStatus = value;
+            ChangeVoxelVisability();
         }
     }
 
@@ -36,35 +78,48 @@ public class Voxel
     #region private fields
     private GameObject _goVoxelTrigger;
     private VoxelGrid _grid;
-    private bool _alive;
+
+    private VoxelState _voxelStatus;
+    private bool _showAliveVoxel;
+    private bool _showAvailableVoxel;
+
     private float _scalefactor = 0.95f;
     private float _voxelSixe => _grid.VoxelSize;
     private Vector3 _gridOrigin => _grid.Origin;
 
-    
+
 
     #endregion
 
     #region constructors
-    public Voxel(int x, int y, int z, VoxelGrid grid)
-    {
-        Index = new Vector3Int(x, y, z);
-        _grid = grid;
-        
-        CreateGameobject();
-        Alive = true;
-    }
-    #endregion
-
-    #region public functions
+    public Voxel(int x, int y, int z, VoxelGrid grid) : this(new Vector3Int(x, y, z), grid) { }
 
     public Voxel(Vector3Int index, VoxelGrid grid)
     {
         Index = index;
         _grid = grid;
         CreateGameobject();
-        Alive = true;
+
+        Status = VoxelState.Available;
     }
+
+    #endregion
+
+    #region private functions
+    private void ChangeVoxelVisability()
+    {
+        bool visible = false;
+        if (Status == VoxelState.Dead) visible = false;
+        if (Status == VoxelState.Available&&_showAvailableVoxel) visible = true;
+        if (Status == VoxelState.Alive&&_showAliveVoxel) visible = true;
+
+        _goVoxelTrigger.SetActive(visible);
+    }
+    #endregion
+
+    #region public functions
+
+    
 
     public void CreateGameobject()
     {
@@ -72,8 +127,8 @@ public class Voxel
         _goVoxelTrigger.name = $"Voxel {Index}";
         _goVoxelTrigger.tag = "Voxel";
         _goVoxelTrigger.transform.position = Centre;
-        _goVoxelTrigger.transform.localScale = Vector3.one * _voxelSixe* _scalefactor;
-        
+        _goVoxelTrigger.transform.localScale = Vector3.one * _voxelSixe * _scalefactor;
+
         VoxelTrigger trigger = _goVoxelTrigger.AddComponent<VoxelTrigger>();
         trigger.AttachedVoxel = this;
     }
@@ -98,7 +153,7 @@ public class Voxel
     /// </summary>
     /// <param name="relativeIndices">indexes related to the voxels indices</param>
     /// <returns>List of relative indices. If requested indices are out of bounds, the list will be empty</returns>
-    public List<Voxel> GetRelatedVoxels(List<Vector3Int>relativeIndices)
+    public List<Voxel> GetRelatedVoxels(List<Vector3Int> relativeIndices)
     {
         List<Voxel> relatedVoxels = new List<Voxel>();
         foreach (Vector3Int relativeIndex in relativeIndices)
@@ -113,17 +168,23 @@ public class Voxel
         return relatedVoxels;
     }
 
+    /// <summary>
+    /// Toggle the visibility status of the neighbours
+    /// </summary>
     public void ToggleNeighbours()
     {
         List<Voxel> neighbours = GetFaceNeighbourList();
 
         foreach (var neighbour in neighbours)
         {
-            neighbour.Alive = !neighbour.Alive;
+            neighbour.ShowAliveVoxel = !neighbour.ShowAliveVoxel;
         }
     }
 
-    
+    public void SetColor(Color color)
+    {
+        _goVoxelTrigger.GetComponent<MeshRenderer>().material.color = color;
+    }
 
     #endregion
 }

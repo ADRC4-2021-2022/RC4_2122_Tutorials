@@ -50,7 +50,7 @@ public class GameOfLife
 
         foreach (var voxel in _grid.GetVoxelsYLayer(yLayer))
         {
-            voxel.Alive = Random.value < chance ? true : false;
+            voxel.Status = Random.value < chance ? VoxelState.Alive : VoxelState.Available;
         }
     }
 
@@ -85,7 +85,7 @@ public class GameOfLife
         {
             for (int z = 0; z < _grid.GridDimensions.z; z++)
             {
-                _grid.GetVoxelByIndex(x, yLayer, z).Alive = layer[x, z];
+                _grid.GetVoxelByIndex(x, yLayer, z).Status = layer[x, z] ? VoxelState.Alive : VoxelState.Dead;
             }
         }
 
@@ -95,18 +95,11 @@ public class GameOfLife
     #region private functions
     private bool GameOfLifeRules(Voxel voxel)
     {
-        int nrOfAliveNeighbours = 0;
 
         List<Voxel> neighbours = voxel.GetRelatedVoxels(_gameOfLifeNeighbours);
 
         //loop over all the neighbours to check if they are allive
-        foreach (var neighbour in neighbours)
-        {
-            if (neighbour.Alive) nrOfAliveNeighbours++;
-        }
-
-        //The line below dos the same as the foreach loop above, using Linq
-        nrOfAliveNeighbours = neighbours.Count(v => v.Alive);
+        int nrOfAliveNeighbours = neighbours.Count(v => v.Status == VoxelState.Alive);
 
         if (nrOfAliveNeighbours < 2) return false;
         else if (nrOfAliveNeighbours > 3) return false;
@@ -115,7 +108,7 @@ public class GameOfLife
         return true;
     }
 
-   
+
     #endregion
 
 }

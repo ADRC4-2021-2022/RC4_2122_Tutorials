@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Linq;
 public class VoxelGrid
 {
     #region public fields
@@ -11,10 +11,86 @@ public class VoxelGrid
 
     public Vector3 Centre => Origin + (Vector3)GridDimensions * VoxelSize / 2;
 
+    public bool ShowAliveVoxels
+    {
+        get
+        {
+            return _showAliveVoxels;
+        }
+        set
+        {
+            _showAliveVoxels = value;
+            foreach (Voxel voxel in GetVoxels())
+            {
+                voxel.ShowAliveVoxel = value;
+            }
+        }
+    }
+
+    public bool ShowAvailableVoxels
+    {
+        get
+        {
+            return _showAvailableVoxels;
+        }
+        set
+        {
+            _showAvailableVoxels = value;
+            foreach (Voxel voxel in GetVoxels())
+            {
+                voxel.ShowAvailableVoxel = value;
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// what percentage of the available grid has been filled up in percentage
+    /// </summary>
+    public float Efficiency
+    {
+        get
+        {
+            //We're storing the voxels as a list so that we don't have to get them twice. counting a list is more efficient than counting an IEnumerable
+            List<Voxel> flattenedVoxels = GetVoxels().ToList();
+            //if we don't cast this value to a float, it always returns 0 as it is rounding down to integer values
+            return (float)flattenedVoxels.Count(v => v.Status == VoxelState.Alive) / flattenedVoxels.Where(v => v.Status != VoxelState.Dead).Count() * 100;
+        }
+    }
+
+    #region Block fields
+    public Dictionary<int, GameObject> GOPatternPrefabs
+    {
+        get
+        {
+            if (_goPatternPrefabs == null)
+            {
+                _goPatternPrefabs = new Dictionary<int, GameObject>();
+                _goPatternPrefabs.Add(0, Resources.Load("Prefabs/PrefabPatternA") as GameObject);
+                _goPatternPrefabs.Add(1, Resources.Load("Prefabs/PrefabPatternB") as GameObject);
+            }
+            return _goPatternPrefabs;
+        }
+    }
+    #endregion
+
     #endregion
 
     #region private fields
     private Voxel[,,] _voxels;
+    private bool _showAliveVoxels = false;
+    private bool _showAvailableVoxels = false;
+
+    #region block fields
+    private List<Block> _blocks = new List<Block>();
+    private List<Block> _currentBlocks => _blocks.Where(b => b.State != BlockState.Placed).ToList();
+
+    private Dictionary<int, GameObject> _goPatternPrefabs;
+    private int _currentPattern = 1;
+
+
+
+    #endregion
     #endregion
 
     #region Constructors
@@ -42,14 +118,15 @@ public class VoxelGrid
     /// <param name="z">Z dimensions of the grid</param>
     /// <param name="voxelSize">The size of the voxels</param>
     /// <param name="origin">Where the voxelgrid starts</param>
-    public VoxelGrid(int x, int y, int z, float voxelSize, Vector3 origin) : this(new Vector3Int(x, y, z), voxelSize, origin)
-    {
-    }
+    public VoxelGrid(int x, int y, int z, float voxelSize, Vector3 origin) : this(new Vector3Int(x, y, z), voxelSize, origin) { }
 
 
     #endregion
 
     #region private functions
+    /// <summary>
+    /// Create all the voxels in the grid
+    /// </summary>
     private void MakeVoxels()
     {
         _voxels = new Voxel[GridDimensions.x, GridDimensions.y, GridDimensions.z];
@@ -63,6 +140,9 @@ public class VoxelGrid
                 }
             }
         }
+
+        ShowAvailableVoxels = true;
+        ShowAliveVoxels = true;
     }
 
     #endregion
@@ -71,7 +151,7 @@ public class VoxelGrid
     /// <summary>
     /// Get the Voxels of the <see cref="VoxelGrid"/>
     /// </summary>
-    /// <returns>All the Voxels</returns>
+    /// <returns>A flattened collections of all the voxels</returns>
     public IEnumerable<Voxel> GetVoxels()
     {
         for (int x = 0; x < GridDimensions.x; x++)
@@ -137,11 +217,23 @@ public class VoxelGrid
     /// Set the entire grid 'Alive' to a certain state
     /// </summary>
     /// <param name="state">the state to set</param>
-    public void SetGridState(bool state)
+    public void SetGridState(VoxelState state)
     {
         foreach (var voxel in _voxels)
         {
-            voxel.Alive = state;
+            voxel.Status = state;
+        }
+    }
+
+    /// <summary>
+    /// Set the non dead voxels of the  grid to a certain state
+    /// </summary>
+    /// <param name="state">the state to set</param>
+    public void SetNonDeadGridState(VoxelState state)
+    {
+        foreach (var voxel in GetVoxels().Where(v => v.Status != VoxelState.Dead))
+        {
+            voxel.Status = state;
         }
     }
     /// <summary>
@@ -157,21 +249,107 @@ public class VoxelGrid
             {
                 for (int z = 0; z < GridDimensions.z; z++)
                 {
-                    _voxels[x, y, z].Alive = _voxels[x, y - 1, z].Alive;
+                    _voxels[x, y, z].Status = _voxels[x, y - 1, z].Status;
                 }
             }
         }
     }
 
-    public int GetNumberOfAlliveNeighbours(Voxel voxel)
+    /// <summary>
+    /// Get the number of neighbouring voxels that are alive
+    /// </summary>
+    /// <param name="voxel">the voxel to get the neighbours from</param>
+    /// <returns>number of alive neighbours</returns>
+    public int GetNumberOfAliveNeighbours(Voxel voxel)
     {
         int nrOfAliveNeighbours = 0;
         foreach (var vox in voxel.GetFaceNeighbourList())
         {
-            if (vox.Alive) nrOfAliveNeighbours++;
+            if (vox.Status == VoxelState.Alive) nrOfAliveNeighbours++;
         }
 
         return nrOfAliveNeighbours;
     }
+
+    /// <summary>
+    /// Get a random voxel with the Status Available
+    /// </summary>
+    /// <returns>The random available voxel</returns>
+    public Voxel GetRandomAvailableVoxel()
+    {
+        List<Voxel> voxels = new List<Voxel>(GetVoxels().Where(v => v.Status == VoxelState.Available));
+        return voxels[Random.Range(0, voxels.Count)];
+    }
+
+    #region Block functionality
+    /// <summary>
+    /// Set a random pattern index based on all the possible patterns in Pattern list.
+    /// </summary>
+    public void SetRandomPatternIndex() =>
+        _currentPattern = Random.Range(0, PatternManager.Patterns.Count);
+
+    /// <summary>
+    /// Set a random pattern index based on all the possible patterns in Pattern list.
+    /// </summary>
+    public void SetPatternIndex(int index)
+    {
+        if (index >= 0 && index < PatternManager.Patterns.Count)
+            _currentPattern = index;
+        else
+            Debug.LogWarning($"There's not pattern with Index {index}");
+    }
+
+
+
+    /// <summary>
+    /// Temporary add a block to the grid. To confirm the block at it's current position, use the TryAddCurrentBlocksToGrid function
+    /// </summary>
+    /// <param name="anchor">The voxel where the pattern will start building from index(0,0,0) in the pattern</param>
+    /// <param name="rotation">The rotation for the current block. This will be rounded to the nearest x,y or z axis</param>
+    public void AddBlock(Vector3Int anchor, Quaternion rotation) => _blocks.Add(new Block(_currentPattern, anchor, rotation, this));
+
+    /// <summary>
+    /// Try to add the blocks that are currently pending to the grids
+    /// </summary>
+    /// <returns>true if the function managed to place all the current blocks. False in all other cases</returns>
+    public bool TryAddCurrentBlocksToGrid()
+    {
+        //Stop if there are no blocks to add
+        if (_currentBlocks == null || _currentBlocks.Count == 0) return false;
+        //Stop if there are no valid blocks to add
+        if (_currentBlocks.Count(b => b.State == BlockState.Valid) == 0) return false;
+
+        //Keep adding blocks to the grid untill all the pending blocks are added
+        while (_currentBlocks.Count > 0)
+        {
+            _currentBlocks.First().ActivateVoxels();
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Remove all pending blocks from the grid
+    /// </summary>
+    public void PurgeUnplacedBlocks()
+    {
+        _blocks.RemoveAll(b => b.State != BlockState.Placed);
+    }
+
+    public void PurgeAllBlocks()
+    {
+        foreach (var block in _blocks)
+        {
+            block.DestroyBlock();
+        }
+        _blocks = new List<Block>();
+    }
+
+    /// <summary>
+    /// Counts the number of blocks placed in the voxelgrid
+    /// </summary>
+    public int NumberOfBlocks => _blocks.Count(b => b.State == BlockState.Placed);
+
+    #endregion
     #endregion
 }
